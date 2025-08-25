@@ -3,11 +3,23 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://irc:wZQy0hOFFW8vP4qo@cluster0.entmv3v.mongodb.net',{dbName: 'irc'}), UserModule,],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      expandVariables: true,
+    }),
+    MongooseModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('DATABASE_URL'),
+      }),
+      inject: [ConfigService],
+    }),
+    UserModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
-  
 })
 export class AppModule {}

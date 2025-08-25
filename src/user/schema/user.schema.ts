@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { UserRole } from 'src/common/enum/user-role.enum';
 
 export type UserDocument = User & Document;
 
@@ -17,11 +18,11 @@ export class User {
   @Prop()
   fullName: string;
 
-  @Prop({ enum: ['admin', 'editor', 'moderator'], default: 'editor' })
+  @Prop(UserRole)
   role: string;
 
   @Prop()
-  lastLogin: Date;
+  lastLogin?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
