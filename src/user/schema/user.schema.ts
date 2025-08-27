@@ -11,7 +11,7 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true})
+  @Prop() 
   password: string;
   
   @Prop()
@@ -19,6 +19,9 @@ export class User {
 
   @Prop(UserRole)
   role: string;
+
+  @Prop()
+  googleId: string;
 
   @Prop()
   lastLogin?: Date;
