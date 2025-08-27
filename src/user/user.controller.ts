@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { use } from 'passport';
 
- 
+@UseGuards(JwtAuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -25,11 +25,9 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('profile')
   async getProfile(@Request() req) {
-    console.log(req.user)
-    const user = await this.userService.findByEmail(req.user.email);
+    const user = await this.userService.profile(req.user.userId);
     return user;
   }
 
