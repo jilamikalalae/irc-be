@@ -23,17 +23,17 @@ export class AuthService {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const result = user.toObject();
-      console.log('result:', result);
       return {
         email: result.email,
         userId: result._id,
+        role: result.role,
       };
     }
     return null;
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.userId };
+    const payload = { email: user.email, sub: user.userId, role: user.role };
     return {
       accessToken: this.jwtService.sign(payload),
     };
@@ -58,9 +58,7 @@ export class AuthService {
       await user.save();
     }
 
-    console.log('Logged in user:', user);
-
-    const payload = { email: user.email, sub: user._id };
+    const payload = { email: user.email, sub: user._id, role: user.role };
 
     return {
       accessToken: this.jwtService.sign(payload),
