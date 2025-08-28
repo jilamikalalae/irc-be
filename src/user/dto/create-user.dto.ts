@@ -1,9 +1,14 @@
 import { UserRole } from 'src/common/enum/user-role.enum';
-import { User } from '../schema/user.schema';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 export class CreateUserDto {
-  readonly username: string;
+  @IsEmail()
   readonly email: string;
+
+  @IsNotEmpty()
   readonly password: string; 
+
   readonly fullName: string;
+
+
   readonly role: UserRole;
 }
