@@ -35,7 +35,7 @@ export class AuthController {
     res.cookie('access_token', accessToken, {
       httpOnly: true,
     });
-    // res.redirect(this.configService.get<string>('IRC_AI_URL')); 
+    // res.redirect(this.configService.get<string>('IRC_AI_WEB_URL')); 
     return {
       message: 'Login successful',
     };
