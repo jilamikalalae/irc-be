@@ -24,9 +24,10 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
   @Roles(UserRole.SUPER_ADMIN)
+  @Post()
   create(@Body() createUserDto: CreateUserDto) {
+    console.log('createUserDto:', createUserDto);
     return this.userService.create(createUserDto);
   }
 
