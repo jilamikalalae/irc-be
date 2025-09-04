@@ -16,11 +16,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       scope: ['email', 'profile'],
     });
 
-    // Get allowed domains from environment variables
-    const allowedDomainsString = configService.get<string>('ALLOWED_DOMAINS');
-    this.allowedDomains = allowedDomainsString 
-      ? allowedDomainsString.split(',').map(domain => domain.trim().toLowerCase())
-      : ['au.edu']; 
+    
   }
 
   async validate(
@@ -38,13 +34,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       }
 
       const email = emails[0].value;
-      const emailDomain = email.split('@')[1]?.toLowerCase();
-
-      // Validate domain
-      if (!emailDomain || !this.allowedDomains.includes(emailDomain)) {
-        this.logger.warn(`Access denied for domain: ${emailDomain} (email: ${email})`);
-        throw new UnauthorizedException();
-      }
 
       const user = {
         googleId: id,
