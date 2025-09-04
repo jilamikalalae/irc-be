@@ -6,6 +6,8 @@ import {
   Res,
   Get,
   Body,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -56,6 +58,7 @@ export class AuthController {
   }
 
   @Post('oauth-exchange-token')
+  @HttpCode(HttpStatus.OK)
   async exchangeToken(
     @Body() requestBody: OAuthExchangeTokenRequestDto,
     @Res({ passthrough: true }) res,
