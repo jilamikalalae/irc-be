@@ -95,6 +95,9 @@ export class AuthService {
   async exchangeOAuthToken(tempToken: string): Promise<string> {
     try {
       const decoded = this.jwtService.verify(tempToken);
+      if (!decoded || !decoded.sub) {
+        throw new UnauthorizedException()
+      }
 
       const user = await this.userModel.findById(decoded.sub);
       if (!user) {
@@ -105,7 +108,7 @@ export class AuthService {
       const newToken = this.jwtService.sign(payload);
       return newToken;
     } catch (error) {
-      throw new Error('Invalid token');
+      throw new Error(`Token exchange failed: ${error.message}`);
     }
   }
 }
