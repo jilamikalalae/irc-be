@@ -15,7 +15,10 @@ export class User {
   password: string;
   
   @Prop()
-  fullName: string;
+  firstName: string;
+
+  @Prop()
+  lastName: string;
 
   @Prop(UserRole)
   role: string;

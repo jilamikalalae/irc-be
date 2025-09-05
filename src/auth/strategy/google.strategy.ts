@@ -27,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<any> {
     try {
       const { id, emails, photos } = profile;
-      const { given_name, family_name } = profile.name;
+      const { given_name, family_name } = profile._json;
       
       if (!emails || emails.length === 0) {
         throw new UnauthorizedException();
@@ -38,7 +38,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       const user = {
         googleId: id,
         email: email,
-        name: `${given_name} ${family_name}`,
+        firstName: given_name,
+        lastName: family_name,
         picture: photos[0]?.value,
         accessToken,
       };

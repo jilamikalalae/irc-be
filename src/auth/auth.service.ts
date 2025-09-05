@@ -47,8 +47,8 @@ export class AuthService {
         throw new Error('Google login failed: No user information received');
       }
 
-      const { email, name, picture, googleId } = req.user;
-
+      const { email, firstName, lastName, picture, googleId } = req.user;
+      
       const allowedDomainsString =
         this.configService.get<string>('ALLOWED_DOMAINS');
       const allowedDomains = allowedDomainsString
@@ -67,14 +67,14 @@ export class AuthService {
         throw new UnauthorizedException();
       }
 
-
       let user = await this.userModel.findOne({ email }); // already registered user
 
       if (!user) {
         // new user, register them and store new info in DB
         user = new this.userModel({
           email,
-          name,
+          firstName: firstName,
+          lastName: lastName,
           picture,
           googleId,
           role: UserRole.ADMIN,
@@ -105,7 +105,7 @@ export class AuthService {
       const newToken = this.jwtService.sign(payload);
       return newToken;
     } catch (error) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException();
     }
   }
 }
