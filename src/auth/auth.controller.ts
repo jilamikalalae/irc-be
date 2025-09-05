@@ -68,6 +68,8 @@ export class AuthController {
     );
     res.cookie('access_token', accessToken, {
       httpOnly: true,
+      secure: true,      
+      sameSite: 'None',  
     });
     return {};
   }
