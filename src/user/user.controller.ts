@@ -27,7 +27,6 @@ export class UserController {
   @Roles(UserRole.SUPER_ADMIN)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    console.log('createUserDto:', createUserDto);
     return this.userService.create(createUserDto);
   }
 

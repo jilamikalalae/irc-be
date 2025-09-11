@@ -15,6 +15,8 @@ import {
 } from 'src/news-format/schema/news-format.schema';
 import { User, UserDocument } from 'src/user/schema/user.schema';
 import { SaveWorkflowConfigRequestDto } from './dto/save-workflow-config-request.dto';
+import { getBangkokMidnightLastFridayAsUTC } from 'src/utill/date-time';
+import { LatestInfoResponseDto } from './dto/latest-info-response.dto';
 
 @Injectable()
 export class WorkflowConfigService {
@@ -40,21 +42,56 @@ export class WorkflowConfigService {
     if (!user) {
       throw new NotFoundException();
     }
-    const saveWorkFlowConfig: WorkFlowConfig = {
+    const saveWorkFlowConfig: Omit<WorkFlowConfig, 'createdAt' | 'updatedAt'> = {
       categoryId: category.id,
       categoryName: category.name,
       formatId: format.id,
       formatName: format.name,
       formatDescription: format.description,
       createdBy: {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
       },
     };
 
     const result = new this.WorkFlowConfigModel(saveWorkFlowConfig);
     return result.save()
   }
+
+
+  async getLatestInfo(): Promise<LatestInfoResponseDto>{
+    const newestConfig = await this.WorkFlowConfigModel
+      .findOne()
+      .sort({ createdAt: -1})
+      .exec();
+
+    const lastFridayDate = getBangkokMidnightLastFridayAsUTC()
+    const latestConfig = await this.WorkFlowConfigModel
+      .findOne({
+        createdAt: { $lt: lastFridayDate },
+      })
+      .sort({ createdAt: -1})
+      .exec()
+
+
+    const response: LatestInfoResponseDto = {
+      lastWeekCategoryId: latestConfig?.categoryId,
+      lastWeekCategoryName: latestConfig?.categoryName,
+      lastWeekFormatId: latestConfig?.formatId,
+      lastWeekFormatName: latestConfig?.formatName,
+      lastWeekFormatDescription: latestConfig?.formatDescription,
+      currentCategoryId: newestConfig?.categoryId,
+      currentCategoryName: newestConfig?.categoryName,
+      currentFormatId: newestConfig?.formatId,
+      currentFormatName: newestConfig?.formatName,
+      currentFormatDescription: newestConfig?.formatDescription,
+      updatedAt: newestConfig?.updatedAt
+    }
+
+    return response
+  }
+
+  
 }

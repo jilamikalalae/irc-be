@@ -36,6 +36,12 @@ export class WorkFlowConfig {
 
   @Prop({ type: Object })
   createdBy: WorkFlowConfigCreatedBy;
+
+  @Prop()
+  createdAt: Date
+
+  @Prop()
+  updatedAt: Date
 }
 
 export const WorkFlowConfigSchema =

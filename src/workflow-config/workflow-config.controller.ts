@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { WorkflowConfigService } from './workflow-config.service';
 import { SaveWorkflowConfigRequestDto } from './dto/save-workflow-config-request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -11,7 +11,12 @@ export class WorkflowConfigController {
   constructor(private readonly workflowConfigService: WorkflowConfigService) {}
 
   @Post('save')
-  async save(@Request() req, @Body() saveWorkflowConfigRequestDto: SaveWorkflowConfigRequestDto ){
+  async saveController(@Request() req, @Body() saveWorkflowConfigRequestDto: SaveWorkflowConfigRequestDto ){
     return this.workflowConfigService.save(req.user.userId, saveWorkflowConfigRequestDto)
+  }
+
+  @Get('latest-info')
+  async getLatestInfoController(){
+    return this.workflowConfigService.getLatestInfo()
   }
 }
