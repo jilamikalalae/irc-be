@@ -7,8 +7,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   readonly password: string; 
 
-  readonly fullName: string;
-
+  readonly firstName: string;
+  
+  readonly lastName: string;
 
   readonly role: UserRole;
 }

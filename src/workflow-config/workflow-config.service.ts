@@ -1,0 +1,60 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import {
+  WorkFlowConfig,
+  WorkFlowConfigDocument,
+} from './schema/workflow-config.shcema';
+import { Model } from 'mongoose';
+import {
+  Category,
+  CategoryDocument,
+} from 'src/category/schema/category.schema';
+import {
+  NewsFormat,
+  NewsFormatDocument,
+} from 'src/news-format/schema/news-format.schema';
+import { User, UserDocument } from 'src/user/schema/user.schema';
+import { SaveWorkflowConfigRequestDto } from './dto/save-workflow-config-request.dto';
+
+@Injectable()
+export class WorkflowConfigService {
+  constructor(
+    @InjectModel(WorkFlowConfig.name)
+    private WorkFlowConfigModel: Model<WorkFlowConfigDocument>,
+    @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
+    @InjectModel(NewsFormat.name)
+    private newsFormatModel: Model<NewsFormatDocument>,
+    @InjectModel(User.name) private UserModel: Model<UserDocument>,
+  ) {}
+
+  async save(userId: string, request: SaveWorkflowConfigRequestDto) {
+    const category = await this.categoryModel.findById(request.categoryId);
+    if (!category) {
+      throw new NotFoundException();
+    }
+    const format = await this.newsFormatModel.findById(request.formatId);
+    if (!format) {
+      throw new NotFoundException();
+    }
+    const user = await this.UserModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    const saveWorkFlowConfig: WorkFlowConfig = {
+      categoryId: category.id,
+      categoryName: category.name,
+      formatId: format.id,
+      formatName: format.name,
+      formatDescription: format.description,
+      createdBy: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      },
+    };
+
+    const result = new this.WorkFlowConfigModel(saveWorkFlowConfig);
+    return result.save()
+  }
+}
