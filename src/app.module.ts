@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { NewsFormatModule } from './news-format/news-format.module';
 import { WorkflowConfigModule } from './workflow-config/workflow-config.module';
+import { NewsModule } from './news/news.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { WorkflowConfigModule } from './workflow-config/workflow-config.module';
     CategoryModule,
     NewsFormatModule,
     WorkflowConfigModule,
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
