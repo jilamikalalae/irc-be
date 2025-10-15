@@ -35,6 +35,18 @@ export class AuthController {
     };
   }
 
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Res({ passthrough: true }) res) {
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'None',
+    });
+    const webUrl = this.configService.get<string>('IRC_AI_WEB_URL');
+    res.redirect(webUrl);
+  }
+
   @UseGuards(GoogleAuthGuard)
   @Get('google')
   async googleAuth(@Request() req) {
@@ -68,8 +80,8 @@ export class AuthController {
     );
     res.cookie('access_token', accessToken, {
       httpOnly: true,
-      secure: true,      
-      sameSite: 'None',  
+      secure: true,
+      sameSite: 'None',
     });
     return {};
   }
