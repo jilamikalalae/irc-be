@@ -9,10 +9,10 @@ async function bootstrap() {
   app.use(cookieParser());
   const allowedOrigins = [
     'http://localhost:3000',
-    'https://irc-ai-automation-production.up.railway.app', 
+    'https://irc-ai-automation.vercel.app',
   ];
 
-   app.enableCors({
+  app.enableCors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
@@ -21,11 +21,9 @@ async function bootstrap() {
       }
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, 
+    credentials: true,
   });
 
-  await app.listen(process.env.PORT ?? 3000);
-
-  
+  await app.listen(process.env.PORT ?? 8080);
 }
 bootstrap();
