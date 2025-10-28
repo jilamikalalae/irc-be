@@ -1,8 +1,9 @@
-import { Body, Controller, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { NewsSearchRequestDto } from './dto/news-search-request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { NewsUpdateStatusRequestDto } from './dto/news-update-status-request.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('news')
@@ -19,4 +20,10 @@ export class NewsController {
   async searchNews(@Body() request: NewsSearchRequestDto) {
     return await this.newsService.searchNews(request);
   }
+
+  @Put('status')
+  async updateNewsStatus(@Body() request: NewsUpdateStatusRequestDto) {
+    return await this.newsService.updateStatus(request);
+  }
+  
 }

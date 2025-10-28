@@ -11,6 +11,7 @@ import { News, NewsDocument } from './schema/news.schema';
 import { NewsStatus } from 'src/common/enum/news-status.enum';
 import { NewsSearchRequestDto } from './dto/news-search-request.dto';
 import { NewsSearchResponseDto } from './dto/news-search-response.dto';
+import { NewsUpdateStatusRequestDto } from './dto/news-update-status-request.dto';
 
 @Injectable()
 export class NewsService {
@@ -87,4 +88,15 @@ export class NewsService {
       items,
     } as NewsSearchResponseDto;
   }
+
+  async updateStatus (request: NewsUpdateStatusRequestDto){
+    let news = await this.newsModel.findById(request.id).exec();
+    if(!news){
+      throw new NotFoundException('News not found');
+    }
+    news.status = request.status;
+    await news.save();
+    return;
+  }
+
 }
