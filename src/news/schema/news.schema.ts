@@ -1,42 +1,59 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document, Types } from "mongoose";
-import { Category } from "src/category/schema/category.schema";
-import { NewsStatus } from "src/common/enum/news-status.enum";
-import { NewsFormat } from "src/news-format/schema/news-format.schema";
-
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
+import { Category } from 'src/category/schema/category.schema';
+import { NewsStatus } from 'src/common/enum/news-status.enum';
+import { NewsFormat } from 'src/news-format/schema/news-format.schema';
 
 export type NewsDocument = News & Document;
 
-
 @Schema()
-export class News {
-    @Prop({ type: Types.ObjectId , ref: Category.name, required: true })
-    category: Category;
+export class LocalizedNews {
+  @Prop()
+  title: string;
 
-    @Prop({ type: Types.ObjectId , ref: NewsFormat.name, required: true }) 
-    format : NewsFormat;
+  @Prop()
+  hook: string;
 
-    @Prop()
-    title: string;
+  @Prop()
+  introduction: string;
 
-    @Prop()
-    createdAt: Date;
+  @Prop()
+  summery: string;
 
-    @Prop()
-    updatedAt: Date;
+  @Prop()
+  sources: string;
 
-    @Prop()
-    content: string;
-
-    @Prop()
-    source: string;
-
-    @Prop()
-    keyword: string[];
-
-    @Prop(NewsStatus)
-    status: string;
+  @Prop()
+  keyword: string[];
 }
+export const LocalizedNewsSchema =
+  SchemaFactory.createForClass(LocalizedNews);
 
+@Schema({ strict: false})
+export class News {
+  // @Prop({ type: Map, of: LocalizedNewsSchema })
+  // localizedNews: Map<string, LocalizedNews>;
+
+  @Prop()
+  en: LocalizedNews;
+
+  @Prop()
+  th: LocalizedNews;
+
+  @Prop({ type: Types.ObjectId, ref: Category.name, required: true })
+  category: Category;
+
+  @Prop({ type: Types.ObjectId, ref: NewsFormat.name, required: true })
+  format: NewsFormat;
+
+  @Prop(NewsStatus)
+  status: string;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
+}
 
 export const NewsSchema = SchemaFactory.createForClass(News);

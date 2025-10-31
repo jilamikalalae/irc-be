@@ -7,7 +7,7 @@ import {
 } from 'src/category/schema/category.schema';
 import { Model } from 'mongoose';
 import { NewsFormat } from 'src/news-format/schema/news-format.schema';
-import { News, NewsDocument } from './schema/news.schema';
+import { LocalizedNews, News, NewsDocument } from './schema/news.schema';
 import { NewsStatus } from 'src/common/enum/news-status.enum';
 import { NewsSearchRequestDto } from './dto/news-search-request.dto';
 import { NewsSearchResponseDto } from './dto/news-search-response.dto';
@@ -23,14 +23,16 @@ export class NewsService {
     if (!news) {
         throw new NotFoundException('News not found');
     }
-    
+    const localizedNews: LocalizedNews = news["en"];
     return {
         id : news.id,
         category : news.category.name,
-        title : news.title,
-        content : news.content,
-        source : news.source,
-        keyword : news.keyword,
+        title : localizedNews.title,
+        introduction : localizedNews.introduction,
+        hook : localizedNews.hook,
+        summery : localizedNews.summery,
+        source : localizedNews.sources,
+        keyword : localizedNews.keyword,
         status : news.status as NewsStatus,
         createdAt : news.createdAt,
         updatedAt : news.updatedAt  
@@ -54,7 +56,8 @@ export class NewsService {
     if (request.categoryId && request.categoryId.trim() !== '') {
       query.category = request.categoryId;
     }
-    if (request.status && request.status.trim() !== '') {
+    // Only filter by status when it's explicitly provided (not null/undefined).
+    if (request.status !== undefined && request.status !== null) {
       query.status = request.status;
     }
 
@@ -69,17 +72,25 @@ export class NewsService {
       .limit(limit)
       .exec();
 
-    const items = newsList.map(news => ({
+
+    const langEn = 'en';
+    const items = newsList.map(news => {
+    const localized = news[langEn];
+    console.log('Localized News:', localized);
+    return {
       id: news.id,
       category: news.category?.name,
-      title: news.title,
-      content: news.content,
-      source: news.source,
-      keyword: news.keyword,
+      title: localized?.title || '',
+      introduction: localized?.introduction || '',
+      hook: localized?.hook || '',
+      summery: localized?.summery || '',
+      source: localized?.sources || '',
+      keyword: localized?.keyword || [],
       status: news.status as NewsStatus,
       createdAt: news.createdAt,
-      updatedAt: news.updatedAt
-    }));
+      updatedAt: news.updatedAt,
+    };
+  });
 
     return {
       currentPage: page,
