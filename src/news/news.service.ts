@@ -76,7 +76,6 @@ export class NewsService {
     const langEn = 'en';
     const items = newsList.map(news => {
     const localized: LocalizedNews = news[langEn];
-    console.log('Localized News:', localized);
     return {
       id: news.id,
       category: news.category?.name,
