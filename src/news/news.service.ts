@@ -30,7 +30,7 @@ export class NewsService {
         title : localizedNews.title,
         introduction : localizedNews.introduction,
         hook : localizedNews.hook,
-        summery : localizedNews.summery,
+        summary : localizedNews.summery,
         source : localizedNews.sources,
         keyword : localizedNews.keyword,
         status : news.status as NewsStatus,
@@ -45,12 +45,12 @@ export class NewsService {
     const limit = request.limit ? Number((request as any).limit) : 10;
 
     const query: any = {};
+    
     if (request.keyword) {
+      const kwRegex = { $regex: request.keyword, $options: 'i' };
       query.$or = [
-        { title: { $regex: request.keyword, $options: 'i' } },
-        { content: { $regex: request.keyword, $options: 'i' } },
-        { source: { $regex: request.keyword, $options: 'i' } },
-        { keyword: { $regex: request.keyword, $options: 'i' } },
+        { ['en.title']: kwRegex },
+        { ['en.keyword']: kwRegex },
       ];
     }
     if (request.categoryId && request.categoryId.trim() !== '') {
@@ -75,7 +75,7 @@ export class NewsService {
 
     const langEn = 'en';
     const items = newsList.map(news => {
-    const localized = news[langEn];
+    const localized: LocalizedNews = news[langEn];
     console.log('Localized News:', localized);
     return {
       id: news.id,
@@ -83,7 +83,7 @@ export class NewsService {
       title: localized?.title || '',
       introduction: localized?.introduction || '',
       hook: localized?.hook || '',
-      summery: localized?.summery || '',
+      summary: localized?.summery || '',
       source: localized?.sources || '',
       keyword: localized?.keyword || [],
       status: news.status as NewsStatus,

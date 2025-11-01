@@ -6,7 +6,7 @@ export class NewsDetailResponseDto {
   readonly title: string;
   readonly introduction: string;
   readonly hook: string;
-  readonly summery: string;
+  readonly summary: string;
   readonly source: string;
   readonly keyword: string[];
   readonly status: NewsStatus;
