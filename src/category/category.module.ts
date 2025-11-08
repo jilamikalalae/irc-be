@@ -3,6 +3,7 @@ import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Category, CategorySchema } from './schema/category.schema';
+import { News, NewsSchema } from 'src/news/schema/news.schema';
 
 @Module({
   imports: [
@@ -11,6 +12,10 @@ import { Category, CategorySchema } from './schema/category.schema';
         name: Category.name,
         schema: CategorySchema,
     },
+    {
+      name: News.name,
+      schema: NewsSchema,
+    }
   ])
   ],
   controllers: [CategoryController],
