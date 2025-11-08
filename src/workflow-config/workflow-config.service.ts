@@ -44,10 +44,10 @@ export class WorkflowConfigService {
     }
     const saveWorkFlowConfig: Omit<WorkFlowConfig, 'createdAt' | 'updatedAt'> = {
       categoryId: category.id,
-      categoryName: category.name,
+      categoryName: category.localization.get('en')?.name || '',
       formatId: format.id,
-      formatName: format.name,
-      formatDescription: format.description,
+      formatName: format.localization.get('en')?.name || '',
+      formatDescription: format.localization.get('en')?.description || '',
       createdBy: {
       id: user.id,
       email: user.email,

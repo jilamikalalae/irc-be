@@ -26,7 +26,7 @@ export class NewsService {
     const localizedNews: LocalizedNews = news["en"];
     return {
         id : news.id,
-        category : news.category.name,
+        category : news.category.localization.get('en')?.name || '',
         title : localizedNews.title,
         introduction : localizedNews.introduction,
         hook : localizedNews.hook,
@@ -78,7 +78,7 @@ export class NewsService {
     const localized: LocalizedNews = news[langEn];
     return {
       id: news.id,
-      category: news.category?.name,
+      category: news.category?.localization.get('en')?.name || '',
       title: localized?.title || '',
       introduction: localized?.introduction || '',
       hook: localized?.hook || '',

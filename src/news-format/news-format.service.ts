@@ -12,8 +12,8 @@ export class NewsFormatService {
         const rawNewsFormats = await this.newsFormatModel.find().exec();
         const response: NewsFormatWorkflowConfigResponseDto[] = rawNewsFormats.map(newsFormat => ({
             id: newsFormat.id,
-            name: newsFormat.name,
-            description: newsFormat.description,
+            name: newsFormat.localization.get('en')?.name || '',
+            description: newsFormat.localization.get('en')?.description || '',
         }));
         return response;
     }

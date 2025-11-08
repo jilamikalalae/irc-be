@@ -12,8 +12,8 @@ export class CategoryService {
         const rawCategories = await this.categoryModel.find().exec();
         const response: CategoryWorkflowConfigResponseDto[] = rawCategories.map(category => ({
             id: category.id,
-            name: category.name,
-        }));
+            name: category.localization.get('en')?.name || '',
+        }));      
         return response;
     }   
 }
