@@ -9,6 +9,7 @@ import { CategoryModule } from './category/category.module';
 import { NewsFormatModule } from './news-format/news-format.module';
 import { WorkflowConfigModule } from './workflow-config/workflow-config.module';
 import { NewsModule } from './news/news.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { NewsModule } from './news/news.module';
     NewsFormatModule,
     WorkflowConfigModule,
     NewsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
