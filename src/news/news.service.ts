@@ -66,8 +66,7 @@ export class NewsService {
       const endDate = new Date(request.endDate);
       endDate.setUTCHours(23, 59, 59, 999); // Set to end of the day
       
-      query.created_at = { ...query.created_at, $gte: startDate };
-      query.created_at = { ...query.created_at, $lte: endDate };
+      query.created_at = { $gte: startDate, $lte: endDate };
     }
     
     const totalItems = await this.newsModel.countDocuments(query);
