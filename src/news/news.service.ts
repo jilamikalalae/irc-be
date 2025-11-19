@@ -61,6 +61,15 @@ export class NewsService {
       query.status = request.status;
     }
 
+    if (request.startDate && request.endDate) {
+      const startDate =  new Date(request.startDate)
+      const endDate = new Date(request.endDate);
+      endDate.setUTCHours(23, 59, 59, 999); // Set to end of the day
+      
+      query.created_at = { ...query.created_at, $gte: startDate };
+      query.created_at = { ...query.created_at, $lte: endDate };
+    }
+    
     const totalItems = await this.newsModel.countDocuments(query);
     const totalPage = Math.ceil(totalItems / limit);
     const skip = (page - 1) * limit;

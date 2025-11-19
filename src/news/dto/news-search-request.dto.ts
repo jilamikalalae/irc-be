@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional } from "class-validator";
+import { IsDateString, IsEnum, IsOptional } from "class-validator";
 import { NewsStatus } from "src/common/enum/news-status.enum";
 
 export class NewsSearchRequestDto {
@@ -6,6 +6,14 @@ export class NewsSearchRequestDto {
   limit?: number;
   keyword?: string;
   categoryId?: string;
+
+  @IsDateString()
+  @IsOptional()
+  startDate?: string;
+
+  @IsDateString()
+  @IsOptional()
+  endDate?: string;
   
   @IsOptional()
   @IsEnum(NewsStatus)
