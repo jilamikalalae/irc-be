@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -14,8 +14,8 @@ export class DashboardController {
   }
 
   @Get('recent-news')
-  async getRecentNews(@Query('limit') limit: number) {
-    return this.dashboardService.getRecentNews({ limit: limit });
+  async getRecentNews(@Query('limit') limit: number , @Request() req) {
+    return this.dashboardService.getRecentNews({ limit: limit }, req.lang);
   }
 
 }

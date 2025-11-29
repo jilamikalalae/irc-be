@@ -18,15 +18,15 @@ export class NewsService {
   constructor(
     @InjectModel(News.name) private newsModel: Model<NewsDocument>,
   ) {}
-  async getNewsById(id: string): Promise<NewsDetailResponseDto | null> {
+  async getNewsById(id: string, lang: string): Promise<NewsDetailResponseDto | null> {
     const news = await this.newsModel.findById(id).populate('category').exec();
     if (!news) {
         throw new NotFoundException('News not found');
     }
-    const localizedNews: LocalizedNews = news["en"];
+    const localizedNews: LocalizedNews = news[lang];
     return {
         id : news.id,
-        category : news.category.localization.get('en')?.name || '',
+        category : news.category.localization.get(lang)?.name || '',
         title : localizedNews.title,
         introduction : localizedNews.introduction,
         hook : localizedNews.hook,
@@ -40,7 +40,7 @@ export class NewsService {
   }
   
 
-  async searchNews(request: NewsSearchRequestDto): Promise<NewsSearchResponseDto> {
+  async searchNews(request: NewsSearchRequestDto, lang: string): Promise<NewsSearchResponseDto> {
     const page = request.page ? Number((request as any).page) : 1;
     const limit = request.limit ? Number((request as any).limit) : 10;
 
@@ -81,12 +81,12 @@ export class NewsService {
       .exec();
 
 
-    const langEn = 'en';
+    const langEn = lang;
     const items = newsList.map(news => {
     const localized: LocalizedNews = news[langEn];
     return {
       id: news.id,
-      category: news.category?.localization.get('en')?.name || '',
+      category: news.category?.localization.get(lang)?.name || '',
       title: localized?.title || '',
       introduction: localized?.introduction || '',
       hook: localized?.hook || '',

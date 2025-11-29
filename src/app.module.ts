@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -11,6 +11,7 @@ import { WorkflowConfigModule } from './workflow-config/workflow-config.module';
 import { NewsModule } from './news/news.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { WorkflowLogModule } from './workflow-log/workflow-log.module';
+import { LanguageMiddleware } from './common/middleware/language.middleware';
 
 
 @Module({
@@ -38,4 +39,8 @@ import { WorkflowLogModule } from './workflow-log/workflow-log.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LanguageMiddleware).forRoutes('*');
+  }
+}

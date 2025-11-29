@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { NewsSearchRequestDto } from './dto/news-search-request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -11,14 +11,14 @@ export class NewsController {
   constructor(private readonly newsService: NewsService) {}
 
   @Get(':id')
-  async getNewsById(@Param('id') id: string) {
-    return this.newsService.getNewsById(id);
+  async getNewsById(@Param('id') id: string, @Request() req) {
+    return this.newsService.getNewsById(id, req.lang);
   }
   
   @Post('search')
   @HttpCode(200)
-  async searchNews(@Body() request: NewsSearchRequestDto) {
-    return await this.newsService.searchNews(request);
+  async searchNews(@Body() request: NewsSearchRequestDto, @Request() req) {
+    return await this.newsService.searchNews(request, req.lang);
   }
 
   @Put('status')

@@ -12,7 +12,7 @@ export class WorkflowConfigController {
 
   @Post('save')
   async saveController(@Request() req, @Body() saveWorkflowConfigRequestDto: SaveWorkflowConfigRequestDto ){
-    return this.workflowConfigService.save(req.user.userId, saveWorkflowConfigRequestDto)
+    return this.workflowConfigService.save(req.user.userId, saveWorkflowConfigRequestDto, req.lang)
   }
 
   @Get('latest-info')

@@ -8,12 +8,12 @@ import { NewsFormatWorkflowConfigResponseDto } from './dto/news-format-workflow-
 export class NewsFormatService {
     constructor(@InjectModel(NewsFormat.name) private newsFormatModel: Model<NewsFormatDocument>) {}
 
-    async getAllForWorkflowConfig(): Promise<NewsFormatWorkflowConfigResponseDto[]> {
+    async getAllForWorkflowConfig(lang: string): Promise<NewsFormatWorkflowConfigResponseDto[]> {
         const rawNewsFormats = await this.newsFormatModel.find().exec();
         const response: NewsFormatWorkflowConfigResponseDto[] = rawNewsFormats.map(newsFormat => ({
             id: newsFormat.id,
-            name: newsFormat.localization.get('en')?.name || '',
-            description: newsFormat.localization.get('en')?.description || '',
+            name: newsFormat.localization.get(lang)?.name || '',
+            description: newsFormat.localization.get(lang)?.description || '',
         }));
         return response;
     }

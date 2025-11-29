@@ -29,7 +29,7 @@ export class DashboardService {
         };
     }
 
-    async getRecentNews(request: RecentNewsRequestDto): Promise<RecentNewsResponseDto[]> {
+    async getRecentNews(request: RecentNewsRequestDto, lang: string): Promise<RecentNewsResponseDto[]> {
         const recentNews = await this.newsModel.find()
             .sort({ updatedAt: -1 })
             .limit(request.limit)
@@ -37,12 +37,12 @@ export class DashboardService {
             .exec();
 
         return recentNews.map(news => {
-            const localizedNews = news['en'];
+            const localizedNews = news[lang];
             console.log('Localized News:', localizedNews);
             return {
                 id: news.id,
                 title: localizedNews.title,
-                category: news.category.localization.get('en')?.name || '',
+                category: news.category.localization.get(lang)?.name || '',
                 status: news.status as NewsStatus,
                 updatedAt: news.updatedAt
             };

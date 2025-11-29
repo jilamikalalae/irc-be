@@ -15,11 +15,11 @@ export class CategoryService {
         @InjectModel(News.name) private newsModel: Model<NewsDocument>
 ) {}
 
-    async getAllForWorkflowConfig(): Promise<CategoryWorkflowConfigResponseDto[]> {
+    async getAllForWorkflowConfig(lang: string): Promise<CategoryWorkflowConfigResponseDto[]> {
         const rawCategories = await this.categoryModel.find().exec();
         const response: CategoryWorkflowConfigResponseDto[] = rawCategories.map(category => ({
             id: category.id,
-            name: category.localization.get('en')?.name || '',
+            name: category.localization.get(lang)?.name || '',
         }));      
         return response;
     }  
@@ -35,7 +35,7 @@ export class CategoryService {
         }
     }
 
-    async searchCategory(request: CategorySearchRequestDto): Promise<CategorySearchResponseDto[]> {
+    async searchCategory(request: CategorySearchRequestDto, lang: string): Promise<CategorySearchResponseDto[]> {
         const query: any = {};
         if (request.keyword && request.keyword.trim() !== '') {
             const kwRegex = { $regex: request.keyword, $options: 'i' };
@@ -57,8 +57,8 @@ export class CategoryService {
         const countsMap = new Map<string, number>(counts.map(c => [String(c._id), c.count]));
 
         const response: CategorySearchResponseDto[] = rawCategories.map(category => ({
-            name: category.localization.get('en')?.name || '',
-            description: category.localization.get('en')?.description || '',
+            name: category.localization.get(lang)?.name || '',
+            description: category.localization.get(lang)?.description || '',
             isVisible: category.isVisible,
             totalNews: countsMap.get(category.id) || 0
         }));

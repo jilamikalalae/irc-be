@@ -29,7 +29,7 @@ export class WorkflowConfigService {
     @InjectModel(User.name) private UserModel: Model<UserDocument>,
   ) {}
 
-  async save(userId: string, request: SaveWorkflowConfigRequestDto) {
+  async save(userId: string, request: SaveWorkflowConfigRequestDto, lang: string) {
     const category = await this.categoryModel.findById(request.categoryId);
     if (!category) {
       throw new NotFoundException();
@@ -44,10 +44,10 @@ export class WorkflowConfigService {
     }
     const saveWorkFlowConfig: Omit<WorkFlowConfig, 'createdAt' | 'updatedAt'> = {
       categoryId: category.id,
-      categoryName: category.localization.get('en')?.name || '',
+      categoryName: category.localization.get(lang)?.name || '',
       formatId: format.id,
-      formatName: format.localization.get('en')?.name || '',
-      formatDescription: format.localization.get('en')?.description || '',
+      formatName: format.localization.get(lang)?.name || '',
+      formatDescription: format.localization.get(lang)?.description || '',
       createdBy: {
       id: user.id,
       email: user.email,
