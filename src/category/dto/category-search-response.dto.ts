@@ -3,4 +3,5 @@ export class CategorySearchResponseDto {
     readonly description: string;
     readonly isVisible: boolean;
     readonly totalNews: number;
+    readonly colorCode: string;
 }

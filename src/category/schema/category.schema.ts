@@ -20,6 +20,9 @@ export class Category {
 
   @Prop({ type: Map, of: LocalizationSchema })
   localization: Map<string, Localization>;
+
+  @Prop()
+  colorCode: string;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
