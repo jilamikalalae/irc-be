@@ -12,6 +12,7 @@ import { NewsModule } from './news/news.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { WorkflowLogModule } from './workflow-log/workflow-log.module';
 import { LanguageMiddleware } from './common/middleware/language.middleware';
+import { SanityModule } from './sanity/sanity.module';
 
 
 @Module({
@@ -35,6 +36,7 @@ import { LanguageMiddleware } from './common/middleware/language.middleware';
     NewsModule,
     DashboardModule,
     WorkflowLogModule,
+    SanityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

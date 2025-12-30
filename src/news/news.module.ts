@@ -4,6 +4,7 @@ import { NewsController } from './news.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { News, NewsSchema } from './schema/news.schema';
 import { Category, CategorySchema } from 'src/category/schema/category.schema';
+import { SanityService } from 'src/sanity/sanity.service';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { Category, CategorySchema } from 'src/category/schema/category.schema';
     ]),
   ],
   controllers: [NewsController],
-  providers: [NewsService, MongooseModule],
+  providers: [NewsService, MongooseModule, SanityService],
 })
 export class NewsModule {}

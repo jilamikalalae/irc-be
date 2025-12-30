@@ -12,46 +12,52 @@ import { NewsStatus } from 'src/common/enum/news-status.enum';
 import { NewsSearchRequestDto } from './dto/news-search-request.dto';
 import { NewsSearchResponseDto } from './dto/news-search-response.dto';
 import { NewsUpdateStatusRequestDto } from './dto/news-update-status-request.dto';
+import { SanityService } from 'src/sanity/sanity.service';
+import { stringToPortableText } from 'src/utill/string';
+import { createSlug } from 'src/utill/slug';
 
 @Injectable()
 export class NewsService {
   constructor(
     @InjectModel(News.name) private newsModel: Model<NewsDocument>,
+    private readonly sanityService: SanityService,
   ) {}
-  async getNewsById(id: string, lang: string): Promise<NewsDetailResponseDto | null> {
+  async getNewsById(
+    id: string,
+    lang: string,
+  ): Promise<NewsDetailResponseDto | null> {
     const news = await this.newsModel.findById(id).populate('category').exec();
     if (!news) {
-        throw new NotFoundException('News not found');
+      throw new NotFoundException('News not found');
     }
     const localizedNews: LocalizedNews = news[lang];
     return {
-        id : news.id,
-        category : news.category.localization.get(lang)?.name || '',
-        title : localizedNews.title,
-        introduction : localizedNews.introduction,
-        hook : localizedNews.hook,
-        summary : localizedNews.summery,
-        source : localizedNews.sources,
-        keyword : localizedNews.keyword,
-        status : news.status as NewsStatus,
-        createdAt : news.createdAt,
-        updatedAt : news.updatedAt  
+      id: news.id,
+      category: news.category.localization.get(lang)?.name || '',
+      title: localizedNews.title,
+      introduction: localizedNews.introduction,
+      hook: localizedNews.hook,
+      summary: localizedNews.summery,
+      source: localizedNews.sources,
+      keyword: localizedNews.keyword,
+      status: news.status as NewsStatus,
+      createdAt: news.createdAt,
+      updatedAt: news.updatedAt,
     };
   }
-  
 
-  async searchNews(request: NewsSearchRequestDto, lang: string): Promise<NewsSearchResponseDto> {
+  async searchNews(
+    request: NewsSearchRequestDto,
+    lang: string,
+  ): Promise<NewsSearchResponseDto> {
     const page = request.page ? Number((request as any).page) : 1;
     const limit = request.limit ? Number((request as any).limit) : 10;
 
     const query: any = {};
-    
+
     if (request.keyword) {
       const kwRegex = { $regex: request.keyword, $options: 'i' };
-      query.$or = [
-        { ['en.title']: kwRegex },
-        { ['en.keyword']: kwRegex },
-      ];
+      query.$or = [{ ['en.title']: kwRegex }, { ['en.keyword']: kwRegex }];
     }
     if (request.categoryId && request.categoryId.trim() !== '') {
       query.category = request.categoryId;
@@ -62,42 +68,42 @@ export class NewsService {
     }
 
     if (request.startDate && request.endDate) {
-      const startDate =  new Date(request.startDate)
+      const startDate = new Date(request.startDate);
       const endDate = new Date(request.endDate);
       endDate.setUTCHours(23, 59, 59, 999); // Set to end of the day
       console.log('Filtering from', startDate, 'to', endDate);
       query.createdAt = { $gte: startDate, $lte: endDate };
     }
-    
+
     const totalItems = await this.newsModel.countDocuments(query);
     const totalPage = Math.ceil(totalItems / limit);
     const skip = (page - 1) * limit;
 
-    const newsList = await this.newsModel.find(query)
+    const newsList = await this.newsModel
+      .find(query)
       .populate('category')
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .exec();
 
-
     const langEn = lang;
-    const items = newsList.map(news => {
-    const localized: LocalizedNews = news[langEn];
-    return {
-      id: news.id,
-      category: news.category?.localization.get(lang)?.name || '',
-      title: localized?.title || '',
-      introduction: localized?.introduction || '',
-      hook: localized?.hook || '',
-      summary: localized?.summery || '',
-      source: localized?.sources || '',
-      keyword: localized?.keyword || [],
-      status: news.status as NewsStatus,
-      createdAt: news.createdAt,
-      updatedAt: news.updatedAt,
-    };
-  });
+    const items = newsList.map((news) => {
+      const localized: LocalizedNews = news[langEn];
+      return {
+        id: news.id,
+        category: news.category?.localization.get(lang)?.name || '',
+        title: localized?.title || '',
+        introduction: localized?.introduction || '',
+        hook: localized?.hook || '',
+        summary: localized?.summery || '',
+        source: localized?.sources || '',
+        keyword: localized?.keyword || [],
+        status: news.status as NewsStatus,
+        createdAt: news.createdAt,
+        updatedAt: news.updatedAt,
+      };
+    });
 
     return {
       currentPage: page,
@@ -107,9 +113,9 @@ export class NewsService {
     } as NewsSearchResponseDto;
   }
 
-  async updateStatus (request: NewsUpdateStatusRequestDto){
+  async updateStatus(request: NewsUpdateStatusRequestDto) {
     let news = await this.newsModel.findById(request.id).exec();
-    if(!news){
+    if (!news) {
       throw new NotFoundException('News not found');
     }
     news.status = request.status;
@@ -117,4 +123,45 @@ export class NewsService {
     return;
   }
 
+  async publishNews(id: string) {
+    let news = await this.newsModel.findById(id).exec();
+    if (!news) {
+      throw new NotFoundException('News not found');
+    }
+
+    let contentEnArray = [news.en.introduction, news.en.hook, news.en.summery];
+    let contentThArray = [news.th.introduction, news.th.hook, news.th.summery];
+
+    let contentEn = contentEnArray.join('\n\n');
+    let contentTh = contentThArray.join('\n\n');
+
+    let slug = await this.sanityService.generateUniqueSlug(news.en.title);
+
+    this.sanityService.createDocument({
+      _type: 'post',
+      title: {
+        en: news.en.title,
+        th: news.th.title,
+      },
+      slug: {
+        _type: 'slug',
+        current: slug,
+      },
+      excerpt: {
+        en: news.en.introduction,
+        th: news.th.introduction,
+      },
+      content: {
+        en: stringToPortableText(contentEn),
+        th: stringToPortableText(contentTh),
+      },
+      featured: false,
+      publishedAt: new Date().toISOString(),
+    });
+
+    news.status = NewsStatus.PUBLISHED;
+    news.updatedAt = new Date();
+    await news.save();
+    return;
+  }
 }

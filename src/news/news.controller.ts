@@ -25,5 +25,10 @@ export class NewsController {
   async updateNewsStatus(@Body() request: NewsUpdateStatusRequestDto) {
     return await this.newsService.updateStatus(request);
   }
+
+  @Post('publish/:id')
+  async publishNews(@Param('id') id: string) {
+    return await this.newsService.publishNews(id);
+  }
   
 }
