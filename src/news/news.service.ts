@@ -15,6 +15,7 @@ import { NewsUpdateStatusRequestDto } from './dto/news-update-status-request.dto
 import { SanityService } from 'src/sanity/sanity.service';
 import { stringToPortableText } from 'src/utill/string';
 import { createSlug } from 'src/utill/slug';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class NewsService {
@@ -147,6 +148,13 @@ export class NewsService {
         _type: 'slug',
         current: slug,
       },
+      categories: [
+        {
+          _key: randomUUID(),
+          _ref: "74797a2e-63c1-460a-a7df-8f174a2b790e",
+          _type: 'reference',
+        }
+      ],
       excerpt: {
         en: news.en.introduction,
         th: news.th.introduction,
