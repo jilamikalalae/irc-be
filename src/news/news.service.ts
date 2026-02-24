@@ -59,6 +59,7 @@ export class NewsService {
     if (request.keyword) {
       const kwRegex = { $regex: request.keyword, $options: 'i' };
       query.$or = [{ ['en.title']: kwRegex }, { ['en.keyword']: kwRegex }];
+      query.$or.push({ ['th.title']: kwRegex }, { ['th.keyword']: kwRegex });
     }
     if (request.categoryId && request.categoryId.trim() !== '') {
       query.category = request.categoryId;
