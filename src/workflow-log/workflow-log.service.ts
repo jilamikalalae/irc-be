@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { WorkflowLog, WorkflowLogDocument } from './schema/workflow-log.schema';
+import { LocalizedWorkflowLog, WorkflowLog, WorkflowLogDocument } from './schema/workflow-log.schema';
 import { Model } from 'mongoose';
 import { GetWorkflowLogRequestDto } from './dto/get-workflow-log-request.dto';
 import { GetWorkflowLogResponseDto, WorkflowLogResponseDto } from './dto/get-workflow-log-response.dto';
@@ -11,7 +11,7 @@ export class WorkflowLogService {
         @InjectModel(WorkflowLog.name) private workflowLogModel: Model<WorkflowLogDocument>,
     ) {}
 
-    async workflowLog(request: GetWorkflowLogRequestDto): Promise<GetWorkflowLogResponseDto> {
+    async workflowLog(request: GetWorkflowLogRequestDto, lang: string): Promise<GetWorkflowLogResponseDto> {
         const page = request.page ? Number((request as any).page) : 1;
         const limit = request.limit ? Number((request as any).limit) : 10;
         
@@ -27,15 +27,17 @@ export class WorkflowLogService {
                 .exec(),
             this.workflowLogModel.countDocuments().exec(),
         ]);
-
+        console.log("lang",lang);
+        console.log("items",logs);
         const items:WorkflowLogResponseDto[] = logs.map(log => ({
             id: log.id,
             createdAt: log.createdAt,
             updatedAt: log.updatedAt,
-            step: log.step,
-            status: log.status,
+            step: log.step[lang],
+            status: log.status[lang],
             durationMs: log.durationMs,
         }));
+        
 
         return {
             totalItems: total,

@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Request, UseGuards } from '@nestjs/common';
 import { WorkflowLogService } from './workflow-log.service';
 import { GetWorkflowLogRequestDto } from './dto/get-workflow-log-request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -11,8 +11,8 @@ export class WorkflowLogController {
 
   @Post('search')
   @HttpCode(200)
-  async getWorkflowLogs(@Body() request:GetWorkflowLogRequestDto) {
-    return await this.workflowLogService.workflowLog(request);
+  async getWorkflowLogs(@Body() request:GetWorkflowLogRequestDto, @Request() req ) {
+    return await this.workflowLogService.workflowLog(request, req.lang);
   }
 
 }

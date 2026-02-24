@@ -1,22 +1,33 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
 export type WorkflowLogDocument = WorkflowLog & Document;
 
-@Schema({ collection: 'logs_news_process' })
+@Schema()
+export class LocalizedWorkflowLog {
+  @Prop()
+  en: string;
+
+  @Prop()
+  th: string;
+}
+
+export const localizedWorkflowLogSchema =
+  SchemaFactory.createForClass(LocalizedWorkflowLog);
+@Schema({ collection: 'workflowlogs' })
 export class WorkflowLog {
-  
   @Prop()
   createdAt: Date;
-  
+
   @Prop()
   updatedAt: Date;
-  
+
   @Prop()
-  step: string;
-  
+  step: LocalizedWorkflowLog;
+
   @Prop()
-  status: string;
-  
+  status: LocalizedWorkflowLog;
+
   @Prop()
   durationMs: number;
 }
